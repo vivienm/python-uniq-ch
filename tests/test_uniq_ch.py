@@ -18,6 +18,31 @@ class TestBJKST:
         with pytest.raises(TypeError):
             bjkst.add((4, 5))  # type: ignore
 
+    def test_from_json(self) -> None:
+        bjkst = BJKST.from_json(
+            "[2,4,0,false,[null,null,null,null,9121455318038622642,null,null"
+            ",null,null,14951757901955124024,null,null,null,null,null,null]]"
+        )
+        assert len(bjkst) == 2
+
+        # Values 1 and 2 are in the BJKST already. Adding them again should not
+        # change the size of the BJKST.
+        bjkst.update([1, 2])
+        assert len(bjkst) == 2
+
+        # On the other hand, adding 3 should increase the size of the BJKST.
+        bjkst.add(3)
+        assert len(bjkst) == 3
+
+        with pytest.raises(ValueError):
+            bjkst.from_json(b"Not a JSON")
+
+        with pytest.raises(ValueError):
+            bjkst.from_json(b'{"valid JSON": "but not a BJKST"}')
+
+        with pytest.raises(TypeError):
+            bjkst.from_json(1)  # type: ignore
+
     def test_hash(self) -> None:
         bjkst = BJKST()
 
@@ -39,6 +64,21 @@ class TestBJKST:
         bjkst = BJKST()
         with pytest.raises(TypeError):
             bjkst | [1, 2]  # type: ignore
+
+    def test_to_json(self) -> None:
+        bjkst = BJKST()
+
+        bjkst.add(1)
+        assert bjkst.to_json() == (
+            b"[1,4,0,false,[null,null,null,null,null,null,null"
+            b",null,null,14951757901955124024,null,null,null,null,null,null]]"
+        )
+
+        bjkst.add(2)
+        assert bjkst.to_json() == (
+            b"[2,4,0,false,[null,null,null,null,9121455318038622642,null,null"
+            b",null,null,14951757901955124024,null,null,null,null,null,null]]"
+        )
 
     def test_update(self) -> None:
         bjkst = BJKST()

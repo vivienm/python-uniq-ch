@@ -2,7 +2,7 @@ use std::hash::{BuildHasher, BuildHasherDefault, Hash, Hasher};
 
 use highway::HighwayHasher;
 use pyo3::{
-    exceptions::PyTypeError,
+    exceptions::{PyRuntimeError, PyTypeError, PyValueError},
     prelude::*,
     types::{PyBytes, PyInt, PyString},
 };
@@ -60,6 +60,16 @@ impl Bjkst {
         })
     }
 
+    #[staticmethod]
+    fn from_json(py: Python, data: &[u8]) -> PyResult<Self> {
+        py.allow_threads(|| {
+            let inner: uniq_ch::Bjkst<(), _> = serde_json::from_slice(data).map_err(|e| {
+                PyValueError::new_err(format!("Failed to deserialize BJKST: {}", e))
+            })?;
+            Ok(Self { inner })
+        })
+    }
+
     fn hash(&self, py: Python, value: &PyAny) -> PyResult<u64> {
         Ok(if let Ok(value) = value.downcast::<PyInt>() {
             let value: i128 = value.extract()?;
@@ -76,6 +86,14 @@ impl Bjkst {
                 value.get_type().name().unwrap_or("{unknown}")
             )))?
         })
+    }
+
+    fn to_json(&self, py: Python) -> PyResult<PyObject> {
+        let data = py.allow_threads(|| {
+            serde_json::to_vec(&self.inner)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize BJKTS: {e}")))
+        })?;
+        Ok(PyBytes::new(py, &data).into())
     }
 
     fn update_bjkst(&mut self, py: Python, other: &Self) {
