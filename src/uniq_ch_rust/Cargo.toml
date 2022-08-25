@@ -1,0 +1,13 @@
+[package]
+name = "uniq-ch-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+highway = "0.8.0"
+pyo3 = { version = "0.17.0", features = ["extension-module"] }
+uniq-ch = { git = "https://github.com/vivienm/rust-uniq-ch.git", version = "0.1.0" }
+
+[lib]
+name = "uniq_ch_rust"
+crate-type = ["cdylib"]

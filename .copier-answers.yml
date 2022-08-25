@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier. NEVER EDIT MANUALLY.
+
+_commit: f58cd27
+_src_path: gh:vivienm/copier-python-pdm
+author_email: v.maisonneuve@gmail.com
+author_fullname: Vivien Maisonneuve
+copyright_date: '2022'
+copyright_holder: Vivien Maisonneuve
+copyright_license: MIT
+distribution_name: uniq-ch
+module_name: uniq_ch
+pages_enabled: true
+project_description: A Python library for counting distinct elements in a stream,
+    using ClickHouse uniq data structure.
+project_name: uniq-ch
+project_type: lib
+python_version: '>=3.8'
+repository_name: python-uniq-ch
+repository_namespace: vivienm
+repository_provider: github.com
+script_name: uniq-ch
