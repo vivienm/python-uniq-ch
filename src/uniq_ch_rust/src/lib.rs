@@ -61,9 +61,9 @@ impl Bjkst {
     }
 
     #[staticmethod]
-    fn from_json(py: Python, data: &[u8]) -> PyResult<Self> {
+    fn deserialize(py: Python, data: &[u8]) -> PyResult<Self> {
         py.allow_threads(|| {
-            let inner: uniq_ch::Bjkst<(), _> = serde_json::from_slice(data).map_err(|e| {
+            let inner: uniq_ch::Bjkst<(), _> = bincode::deserialize(&data).map_err(|e| {
                 PyValueError::new_err(format!("Failed to deserialize BJKST: {}", e))
             })?;
             Ok(Self { inner })
@@ -88,10 +88,10 @@ impl Bjkst {
         })
     }
 
-    fn to_json(&self, py: Python) -> PyResult<PyObject> {
+    fn serialize(&self, py: Python) -> PyResult<PyObject> {
         let data = py.allow_threads(|| {
-            serde_json::to_vec(&self.inner)
-                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize BJKTS: {e}")))
+            bincode::serialize(&self.inner)
+                .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize BJKST: {}", e)))
         })?;
         Ok(PyBytes::new(py, &data).into())
     }

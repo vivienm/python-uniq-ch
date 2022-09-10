@@ -125,20 +125,18 @@ class BJKST:
         return BJKST(self)
 
     @staticmethod
-    def from_json(json: Union[str, bytes]) -> "BJKST":
-        """Load a BJKST from its JSON representation."""
-        if isinstance(json, str):
-            json = json.encode()
+    def deserialize(data: bytes) -> "BJKST":
+        """Deserialize a BJKST."""
         bjkst = BJKST.__new__(BJKST)
-        bjkst._inner = _rust.BJKST.from_json(json)
+        bjkst._inner = _rust.BJKST.deserialize(data)
         return bjkst
 
     def _hash(self, value: ValueT) -> int:
         return self._inner.hash(value)
 
-    def to_json(self) -> bytes:
-        """Return a JSON representation of this BJKST."""
-        return self._inner.to_json()
+    def serialize(self) -> bytes:
+        """Serialize this BJKST."""
+        return self._inner.serialize()
 
     def union(self, *others: Union[Iterable[ValueT], "BJKST"]) -> "BJKST":
         """Return a new BJKST with elements from this one and all others.

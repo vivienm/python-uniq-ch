@@ -18,10 +18,11 @@ class TestBJKST:
         with pytest.raises(TypeError):
             bjkst.add((4, 5))  # type: ignore
 
-    def test_from_json(self) -> None:
-        bjkst = BJKST.from_json(
-            "[2,4,0,false,[null,null,null,null,9121455318038622642,null,null"
-            ",null,null,14951757901955124024,null,null,null,null,null,null]]"
+    def test_deserialize(self) -> None:
+        bjkst = BJKST.deserialize(
+            b"\x02\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x10\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x01\xb21J\xc2H\xeb\x95~\x00\x00\x00\x00"
+            b"\x018\xcb\xac\x11\x98P\x7f\xcf\x00\x00\x00\x00\x00\x00"
         )
         assert len(bjkst) == 2
 
@@ -35,13 +36,10 @@ class TestBJKST:
         assert len(bjkst) == 3
 
         with pytest.raises(ValueError):
-            bjkst.from_json(b"Not a JSON")
-
-        with pytest.raises(ValueError):
-            bjkst.from_json(b'{"valid JSON": "but not a BJKST"}')
+            bjkst.deserialize(b"invalid")
 
         with pytest.raises(TypeError):
-            bjkst.from_json(1)  # type: ignore
+            bjkst.deserialize(1)  # type: ignore
 
     def test_hash(self) -> None:
         bjkst = BJKST()
@@ -65,19 +63,21 @@ class TestBJKST:
         with pytest.raises(TypeError):
             bjkst | [1, 2]  # type: ignore
 
-    def test_to_json(self) -> None:
+    def test_serialize(self) -> None:
         bjkst = BJKST()
 
         bjkst.add(1)
-        assert bjkst.to_json() == (
-            b"[1,4,0,false,[null,null,null,null,null,null,null"
-            b",null,null,14951757901955124024,null,null,null,null,null,null]]"
+        assert bjkst.serialize() == (
+            b"\x01\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x10\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x018\xcb\xac\x11\x98P"
+            b"\x7f\xcf\x00\x00\x00\x00\x00\x00"
         )
 
         bjkst.add(2)
-        assert bjkst.to_json() == (
-            b"[2,4,0,false,[null,null,null,null,9121455318038622642,null,null"
-            b",null,null,14951757901955124024,null,null,null,null,null,null]]"
+        assert bjkst.serialize() == (
+            b"\x02\x00\x00\x00\x00\x00\x00\x00\x04\x00\x00\x10\x00\x00\x00\x00"
+            b"\x00\x00\x00\x00\x00\x00\x00\x01\xb21J\xc2H\xeb\x95~\x00\x00\x00\x00"
+            b"\x018\xcb\xac\x11\x98P\x7f\xcf\x00\x00\x00\x00\x00\x00"
         )
 
     def test_update(self) -> None:

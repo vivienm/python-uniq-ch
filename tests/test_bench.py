@@ -11,10 +11,10 @@ def full_bjkst() -> BJKST:
 
 @pytest.mark.benchmark(group="serialize")
 def test_serialize(benchmark: BenchmarkFixture, full_bjkst: BJKST) -> None:
-    assert len(full_bjkst.to_json()) == 1_428_606
-    benchmark(full_bjkst.to_json)
+    assert len(full_bjkst.serialize()) == 532_899
+    benchmark(full_bjkst.serialize)
 
 
 @pytest.mark.benchmark(group="deserialize")
 def test_deserialize(benchmark: BenchmarkFixture, full_bjkst: BJKST) -> None:
-    benchmark(BJKST.from_json, full_bjkst.to_json())
+    benchmark(BJKST.deserialize, full_bjkst.serialize())
