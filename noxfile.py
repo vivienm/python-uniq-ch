@@ -112,6 +112,19 @@ def coverage(session: nox.Session) -> None:
 
 
 @nox.session()
+def bench(session: nox.Session) -> None:
+    session.run(
+        "pdm",
+        "sync",
+        "--clean",
+        "-G",
+        "pytest",
+        external=True,
+    )
+    session.run("pytest", "--benchmark-only")
+
+
+@nox.session()
 def sphinx(session: nox.Session) -> None:
     session.run(
         "pdm",
