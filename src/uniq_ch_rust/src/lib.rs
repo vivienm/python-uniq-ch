@@ -26,9 +26,14 @@ impl Bjkst {
 #[pymethods]
 impl Bjkst {
     #[new]
-    fn new(py: Python) -> Self {
-        py.allow_threads(|| Bjkst {
-            inner: uniq_ch::Bjkst::default(),
+    fn new(py: Python, precision: u8) -> PyResult<Self> {
+        py.allow_threads(|| {
+            let precision = uniq_ch::Precision::new(precision).ok_or_else(|| {
+                PyValueError::new_err(format!("Invalid precision: {}", precision))
+            })?;
+            Ok(Bjkst {
+                inner: uniq_ch::Bjkst::with_precision(precision),
+            })
         })
     }
 

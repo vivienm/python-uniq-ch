@@ -5,16 +5,32 @@ from uniq_ch import BJKST
 
 
 @pytest.fixture(scope="session")
-def full_bjkst() -> BJKST:
-    return BJKST(range(100_000))
+def bjkst_12b() -> BJKST:
+    return BJKST(range(100_000), precision=12)
+
+
+@pytest.fixture(scope="session")
+def bjkst_16b() -> BJKST:
+    return BJKST(range(100_000), precision=16)
 
 
 @pytest.mark.benchmark(group="serialize")
-def test_serialize(benchmark: BenchmarkFixture, full_bjkst: BJKST) -> None:
-    assert len(full_bjkst.serialize()) == 532_899
-    benchmark(full_bjkst.serialize)
+def test_serialize_12b(benchmark: BenchmarkFixture, bjkst_12b: BJKST) -> None:
+    assert len(bjkst_12b.serialize()) == 33_476
+    benchmark(bjkst_12b.serialize)
+
+
+@pytest.mark.benchmark(group="serialize")
+def test_serialize_16b(benchmark: BenchmarkFixture, bjkst_16b: BJKST) -> None:
+    assert len(bjkst_16b.serialize()) == 532_900
+    benchmark(bjkst_16b.serialize)
 
 
 @pytest.mark.benchmark(group="deserialize")
-def test_deserialize(benchmark: BenchmarkFixture, full_bjkst: BJKST) -> None:
-    benchmark(BJKST.deserialize, full_bjkst.serialize())
+def test_deserialize_12b(benchmark: BenchmarkFixture, bjkst_12b: BJKST) -> None:
+    benchmark(BJKST.deserialize, bjkst_12b.serialize())
+
+
+@pytest.mark.benchmark(group="deserialize")
+def test_deserialize_16b(benchmark: BenchmarkFixture, bjkst_16b: BJKST) -> None:
+    benchmark(BJKST.deserialize, bjkst_16b.serialize())

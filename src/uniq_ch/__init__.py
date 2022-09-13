@@ -31,11 +31,13 @@ class BJKST:
     def __init__(
         self,
         values: Union[Iterable[ValueT], "BJKST", None] = None,
+        *,
+        precision: int = 16,
     ) -> None:
         if isinstance(values, BJKST):
             self._inner = values._inner.copy()
             return
-        self._inner = _rust.BJKST()
+        self._inner = _rust.BJKST(precision)
         if values is not None:
             self.update(values)
 
