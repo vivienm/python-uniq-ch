@@ -1,6 +1,6 @@
 from typing import Any, Iterable, NoReturn, Union
 
-import uniq_ch_rust as _rust  # type: ignore
+import uniq_ch_rust as _rust
 
 ValueT = Union[int, bytes, str]
 
@@ -26,7 +26,7 @@ class BJKST:
 
     __slots__ = ["_inner"]
 
-    _inner: _rust.BJKST
+    _inner: _rust.BJKST  # type: ignore
 
     def __init__(
         self,
@@ -37,7 +37,7 @@ class BJKST:
         if isinstance(values, BJKST):
             self._inner = values._inner.copy()
             return
-        self._inner = _rust.BJKST(precision)
+        self._inner = _rust.BJKST(precision)  # type: ignore
         if values is not None:
             self.update(values)
 
@@ -130,7 +130,7 @@ class BJKST:
     def deserialize(data: bytes) -> "BJKST":
         """Deserialize a BJKST."""
         bjkst = BJKST.__new__(BJKST)
-        bjkst._inner = _rust.BJKST.deserialize(data)
+        bjkst._inner = _rust.BJKST.deserialize(data)  # type: ignore
         return bjkst
 
     def _hash(self, value: ValueT) -> int:
