@@ -134,11 +134,11 @@ class BJKST:
         return bjkst
 
     def _hash(self, value: ValueT) -> int:
-        return self._inner.hash(value)
+        return self._inner.hash(value)  # type: ignore
 
     def serialize(self) -> bytes:
         """Serialize this BJKST."""
-        return self._inner.serialize()
+        return self._inner.serialize()  # type: ignore
 
     def union(self, *others: Union[Iterable[ValueT], "BJKST"]) -> "BJKST":
         """Return a new BJKST with elements from this one and all others.
