@@ -14,8 +14,6 @@ dependencies = []
 repository = "https://github.com/vivienm/python-uniq-ch"
 documentation = "https://vivienm.github.io/python-uniq-ch/docs/"
 
-[project.optional-dependencies]
-
 
 [build-system]
 requires = [
@@ -31,46 +29,20 @@ setup-script = "build.py"
 run-setuptools = true
 
 [tool.pdm.dev-dependencies]
-black = [
-    "black>=22.6.0",
-]
-ruff = [
-    "ruff>=0.0.152",
-]
-isort = [
-    "isort>=5.10.1",
-]
-mypy = [
+dev = [
+    "furo>=2022.6.21",
     "mypy>=0.971",
     "nox>=2022.1.7",
-    "pytest>=7.1.2",
-    "setuptools-rust>=1.5.1",
-]
-pytest = [
-    "coverage[toml]>=6.4.4",
-    "pytest>=7.1.2",
+    "pip-audit>=2.6.1",
     "pytest-benchmark>=3.4.1",
-]
-coverage = [
-    "coverage[toml]>=6.4.4",
-]
-sphinx = [
-    "furo>=2022.6.21",
+    "pytest>=7.1.2",
+    "ruff>=0.0.152",
+    "setuptools-rust>=1.5.1",
     "sphinx>=5.1.0",
-]
-safety = [
-    "safety>=2.1.1",
-]
-nox = [
-    "nox>=2022.1.7",
 ]
 
 [tool.pdm.version]
 source = "scm"
-
-
-[tool.isort]
-profile = "black"
 
 
 [tool.mypy]
@@ -78,11 +50,7 @@ strict = true
 exclude = ["^build/"]
 
 [[tool.mypy.overrides]]
-module = [
-    "nox",
-    "pytest_benchmark.fixture",
-    "setuptools_rust",
-]
+module = "pytest_benchmark.*"
 ignore_missing_imports = true
 
 
@@ -94,10 +62,7 @@ testpaths = [
 ]
 
 
-[tool.coverage.run]
-branch = true
-source = ["src"]
-
-[tool.coverage.report]
-fail_under = 100
-show_missing = true
+[tool.ruff]
+extend-select= [
+  "I",  # isort
+]

@@ -1,6 +1,5 @@
 import pytest
 from pytest_benchmark.fixture import BenchmarkFixture
-
 from uniq_ch import BJKST
 
 
