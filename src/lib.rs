@@ -1,4 +1,4 @@
-use std::hash::{BuildHasher, BuildHasherDefault, Hash, Hasher};
+use std::hash::{BuildHasher, BuildHasherDefault, Hash};
 
 use highway::HighwayHasher;
 use pyo3::{
@@ -17,9 +17,7 @@ impl Bjkst {
     where
         T: Hash,
     {
-        let mut hasher = self.inner.hasher().build_hasher();
-        value.hash(&mut hasher);
-        hasher.finish()
+        self.inner.hasher().hash_one(&value)
     }
 }
 
@@ -45,7 +43,7 @@ impl Bjkst {
         py.allow_threads(|| self.inner.len())
     }
 
-    fn add(&mut self, py: Python, value: &PyAny) -> PyResult<()> {
+    fn add(&mut self, py: Python, value: &Bound<'_, PyAny>) -> PyResult<()> {
         let hash = self.hash(py, value)?;
         self.add_hash(py, hash);
         Ok(())
@@ -68,14 +66,14 @@ impl Bjkst {
     #[staticmethod]
     fn deserialize(py: Python, data: &[u8]) -> PyResult<Self> {
         py.allow_threads(|| {
-            let inner: uniq_ch::Bjkst<(), _> = bincode::deserialize(&data).map_err(|e| {
+            let inner: uniq_ch::Bjkst<(), _> = bincode::deserialize(data).map_err(|e| {
                 PyValueError::new_err(format!("Failed to deserialize BJKST: {}", e))
             })?;
             Ok(Self { inner })
         })
     }
 
-    fn hash(&self, py: Python, value: &PyAny) -> PyResult<u64> {
+    fn hash(&self, py: Python, value: &Bound<'_, PyAny>) -> PyResult<u64> {
         Ok(if let Ok(value) = value.downcast::<PyInt>() {
             let value: i128 = value.extract()?;
             py.allow_threads(|| self.hash_generic(value))
@@ -88,7 +86,10 @@ impl Bjkst {
         } else {
             Err(PyTypeError::new_err(format!(
                 "unsupported type: {}",
-                value.get_type().name().unwrap_or("{unknown}")
+                value
+                    .get_type()
+                    .name()
+                    .map_or_else(|_| "{unknown}".into(), |name| name.to_string())
             )))?
         })
     }
@@ -98,7 +99,7 @@ impl Bjkst {
             bincode::serialize(&self.inner)
                 .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize BJKST: {}", e)))
         })?;
-        Ok(PyBytes::new(py, &data).into())
+        Ok(PyBytes::new_bound(py, &data).into())
     }
 
     fn update_bjkst(&mut self, py: Python, other: &Self) {
@@ -114,8 +115,9 @@ impl Bjkst {
     }
 }
 
+/// Low-level extension module.
 #[pymodule]
-fn uniq_ch_rust(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
+fn _lowlevel(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Bjkst>()?;
     Ok(())
 }
