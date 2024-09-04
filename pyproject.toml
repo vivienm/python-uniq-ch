@@ -2,14 +2,14 @@
 name = "uniq-ch"
 version = "0.1.0"
 description = "A Python library for counting distinct elements in a stream, using ClickHouse uniq data structure"
+readme = "README.md"
 authors = [
     { name = "Vivien Maisonneuve", email = "v.maisonneuve@gmail.com" },
 ]
-dependencies = []
-readme = "README.md"
-requires-python = ">=3.10"
 license = { text = "MIT" }
 classifiers = ["Private :: Do Not Upload"]
+requires-python = ">=3.10"
+dependencies = []
 
 [project.urls]
 Documentation = "https://vivienm.github.io/python-uniq-ch"
@@ -30,6 +30,11 @@ dev-dependencies = [
     "pytest>=8.3.1",
     "ruff>=0.5.4",
     "sphinx>=8.0.2",
+]
+cache-keys = [
+    { file = "Cargo.toml" },
+    { file = "Cargo.lock"},
+    { file = "src/**/*.rs" },
 ]
 
 [tool.maturin]
