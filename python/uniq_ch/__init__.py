@@ -1,13 +1,13 @@
 from typing import Any, Iterable, NoReturn, Union
 
-from ._lowlevel import BJKST as _BJKST
+from ._core import BJKST as _BJKST
 
 ValueT = Union[int, bytes, str]
 
 
 def _unsupported_operand_types(op: str, left: Any, right: Any) -> NoReturn:
     raise TypeError(
-        f"unsupported operand type(s) for {op}:" f" {type(left)!r} and {type(right)}"
+        f"unsupported operand type(s) for {op}:" f" {type(left)!r} and {type(right)}",
     )
 
 
