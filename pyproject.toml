@@ -30,6 +30,7 @@ dev = [
     "pytest>=8.3.1",
     "ruff>=0.5.4",
     "sphinx>=8.0.2",
+    "typos>=1.30.0",
 ]
 
 [tool.uv]
@@ -56,7 +57,7 @@ ignore_missing_imports = true
 [tool.ruff.lint]
 extend-select= [
     "I",  # isort
-    "COM",  # flake8-commas
+    "RUF",  # Ruff
 ]
 unfixable = [
     "F401",  # unused imports
@@ -71,4 +72,7 @@ addopts = [
 testpaths = [
     "src",
     "tests",
+]
+filterwarnings = [
+    "error",
 ]
