@@ -99,7 +99,7 @@ impl Bjkst {
             bincode::serialize(&self.inner)
                 .map_err(|e| PyRuntimeError::new_err(format!("Failed to serialize BJKST: {}", e)))
         })?;
-        Ok(PyBytes::new_bound(py, &data).into())
+        Ok(PyBytes::new(py, &data).into())
     }
 
     fn update_bjkst(&mut self, py: Python, other: &Self) {
